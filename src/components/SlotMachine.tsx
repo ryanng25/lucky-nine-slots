@@ -17,8 +17,8 @@ const SlotMachine = () => {
     setCompletedReels(0);
     setSpinCount(reelCount);
     
-    // Generate random results for the spinning reels
-    const newResults: (number | null)[] = [...results];
+    // Reset all results to null first, then set new values for spinning reels
+    const newResults: (number | null)[] = [null, null, null];
     const newActiveReels = [false, false, false];
     
     for (let i = 0; i < reelCount; i++) {
@@ -28,7 +28,7 @@ const SlotMachine = () => {
     
     setResults(newResults);
     setActiveReels(newActiveReels);
-  }, [spinning, results]);
+  }, [spinning]);
 
   const handleReelComplete = useCallback(() => {
     setCompletedReels(prev => {
