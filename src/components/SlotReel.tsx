@@ -34,6 +34,9 @@ const SlotReel = ({ spinning, finalValue, delay, onSpinComplete }: SlotReelProps
         setIsSpinning(false);
         onSpinComplete?.();
       }, delay);
+    } else if (finalValue === null) {
+      // Reset to default when not spinning and no final value
+      setDisplayValue(null);
     }
 
     return () => {
