@@ -3,45 +3,54 @@ import { Button } from "@/components/ui/button";
 import SlotReel from "./SlotReel";
 import { cn } from "@/lib/utils";
 
-type GameMode = "single" | "double" | "triple";
-
 const SlotMachine = () => {
-  const [gameMode, setGameMode] = useState<GameMode>("single");
   const [spinning, setSpinning] = useState(false);
-  const [results, setResults] = useState<number[]>([]);
+  const [results, setResults] = useState<(number | null)[]>([null, null, null]);
+  const [activeReels, setActiveReels] = useState<boolean[]>([false, false, false]);
   const [completedReels, setCompletedReels] = useState(0);
+  const [spinCount, setSpinCount] = useState(0);
 
-  const reelCount = gameMode === "single" ? 1 : gameMode === "double" ? 2 : 3;
-
-  const handleSpin = useCallback(() => {
+  const handleSpin = useCallback((reelCount: 1 | 2 | 3) => {
     if (spinning) return;
     
     setSpinning(true);
     setCompletedReels(0);
+    setSpinCount(reelCount);
     
-    // Generate random results
-    const newResults = Array.from({ length: reelCount }, () => 
-      Math.floor(Math.random() * 10)
-    );
+    // Generate random results for the spinning reels
+    const newResults: (number | null)[] = [...results];
+    const newActiveReels = [false, false, false];
+    
+    for (let i = 0; i < reelCount; i++) {
+      newResults[i] = Math.floor(Math.random() * 10);
+      newActiveReels[i] = true;
+    }
+    
     setResults(newResults);
-  }, [spinning, reelCount]);
+    setActiveReels(newActiveReels);
+  }, [spinning, results]);
 
   const handleReelComplete = useCallback(() => {
     setCompletedReels(prev => {
       const next = prev + 1;
-      if (next >= reelCount) {
+      if (next >= spinCount) {
         setSpinning(false);
+        setActiveReels([false, false, false]);
       }
       return next;
     });
-  }, [reelCount]);
+  }, [spinCount]);
 
   const getDelays = () => {
     const baseDelay = 1000;
-    return Array.from({ length: reelCount }, (_, i) => baseDelay + (i * 500));
+    return [baseDelay, baseDelay + 500, baseDelay + 1000];
   };
 
   const delays = getDelays();
+
+  const getDisplayResults = () => {
+    return results.filter(r => r !== null).join(" - ");
+  };
 
   return (
     <div className="slot-machine">
@@ -51,40 +60,15 @@ const SlotMachine = () => {
         <p className="slot-subtitle">Test Your Fortune</p>
       </div>
 
-      {/* Game Mode Selector */}
-      <div className="mode-selector">
-        <button
-          onClick={() => !spinning && setGameMode("single")}
-          className={cn("mode-btn", gameMode === "single" && "active")}
-          disabled={spinning}
-        >
-          Lucky 9
-        </button>
-        <button
-          onClick={() => !spinning && setGameMode("double")}
-          className={cn("mode-btn", gameMode === "double" && "active")}
-          disabled={spinning}
-        >
-          Double Lucky 9
-        </button>
-        <button
-          onClick={() => !spinning && setGameMode("triple")}
-          className={cn("mode-btn", gameMode === "triple" && "active")}
-          disabled={spinning}
-        >
-          Triple Lucky 9
-        </button>
-      </div>
-
       {/* Slot Display */}
       <div className="slot-display">
         <div className="slot-frame">
           <div className="slot-reels">
-            {Array.from({ length: reelCount }).map((_, index) => (
+            {[0, 1, 2].map((index) => (
               <SlotReel
-                key={`${gameMode}-${index}`}
-                spinning={spinning}
-                finalValue={results[index] ?? 0}
+                key={index}
+                spinning={activeReels[index]}
+                finalValue={results[index]}
                 delay={delays[index]}
                 onSpinComplete={handleReelComplete}
               />
@@ -105,22 +89,42 @@ const SlotMachine = () => {
         </div>
       </div>
 
-      {/* Spin Button */}
-      <Button
-        onClick={handleSpin}
-        disabled={spinning}
-        variant="spin"
-        size="spin"
-        className={cn(spinning && "spinning")}
-      >
-        {spinning ? "SPINNING..." : "SPIN"}
-      </Button>
+      {/* Spin Buttons */}
+      <div className="spin-buttons">
+        <Button
+          onClick={() => handleSpin(1)}
+          disabled={spinning}
+          variant="spin"
+          size="spinSmall"
+          className="spin-btn-lucky"
+        >
+          {spinning && spinCount === 1 ? "SPINNING..." : "LUCKY 9"}
+        </Button>
+        <Button
+          onClick={() => handleSpin(2)}
+          disabled={spinning}
+          variant="spin"
+          size="spinSmall"
+          className="spin-btn-double"
+        >
+          {spinning && spinCount === 2 ? "SPINNING..." : "DOUBLE LUCKY 9"}
+        </Button>
+        <Button
+          onClick={() => handleSpin(3)}
+          disabled={spinning}
+          variant="spin"
+          size="spinSmall"
+          className="spin-btn-triple"
+        >
+          {spinning && spinCount === 3 ? "SPINNING..." : "TRIPLE LUCKY 9"}
+        </Button>
+      </div>
 
       {/* Result Display */}
-      {!spinning && results.length > 0 && (
+      {!spinning && results.some(r => r !== null) && (
         <div className="result-display">
           <span className="result-label">Result:</span>
-          <span className="result-value">{results.join(" - ")}</span>
+          <span className="result-value">{getDisplayResults()}</span>
         </div>
       )}
     </div>

@@ -96,31 +96,24 @@
     @apply text-muted-foreground text-sm md:text-base tracking-widest uppercase;
   }
 
-  /* Mode Selector */
-  .mode-selector {
-    @apply flex flex-wrap justify-center gap-2 md:gap-4;
+  /* Mode Selector - now Spin Buttons */
+  .spin-buttons {
+    @apply flex flex-wrap justify-center gap-3 md:gap-4;
   }
 
-  .mode-btn {
-    @apply px-4 py-2 md:px-6 md:py-3 rounded-lg text-xs md:text-sm font-bold uppercase tracking-wider;
-    @apply bg-muted text-muted-foreground border-2 border-transparent;
-    @apply transition-all duration-300;
-    font-family: 'Orbitron', sans-serif;
+  .spin-btn-lucky {
+    @apply bg-gradient-to-b from-[hsl(0_85%_55%)] via-[hsl(0_85%_45%)] to-[hsl(0_85%_35%)];
   }
 
-  .mode-btn:hover:not(:disabled) {
-    @apply border-accent/50;
-    box-shadow: 0 0 20px hsl(var(--slot-glow-blue) / 0.3);
+  .spin-btn-double {
+    @apply bg-gradient-to-b from-[hsl(45_100%_50%)] via-[hsl(45_100%_40%)] to-[hsl(45_100%_30%)];
+    @apply text-[hsl(240_20%_10%)];
   }
 
-  .mode-btn.active {
-    @apply bg-accent text-accent-foreground border-accent;
-    box-shadow: 0 0 30px hsl(var(--slot-glow-blue) / 0.5);
+  .spin-btn-triple {
+    @apply bg-gradient-to-b from-[hsl(210_100%_55%)] via-[hsl(210_100%_45%)] to-[hsl(210_100%_35%)];
   }
 
-  .mode-btn:disabled {
-    @apply opacity-50 cursor-not-allowed;
-  }
 
   /* Slot Display */
   .slot-display {

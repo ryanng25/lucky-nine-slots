@@ -9,7 +9,7 @@ interface SlotReelProps {
 }
 
 const SlotReel = ({ spinning, finalValue, delay, onSpinComplete }: SlotReelProps) => {
-  const [displayValue, setDisplayValue] = useState<number>(0);
+  const [displayValue, setDisplayValue] = useState<number | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -44,15 +44,15 @@ const SlotReel = ({ spinning, finalValue, delay, onSpinComplete }: SlotReelProps
 
   return (
     <div className="slot-reel-container">
-      <div className="slot-reel-window">
+      <div className={cn("slot-reel-window", isSpinning && "active")}>
         <div className={cn(
           "slot-reel-number",
           isSpinning && "spinning"
         )}>
-          {displayValue}
+          {displayValue !== null ? displayValue : "?"}
         </div>
       </div>
-      <div className="slot-reel-glow" />
+      <div className={cn("slot-reel-glow", isSpinning && "active")} />
     </div>
   );
 };

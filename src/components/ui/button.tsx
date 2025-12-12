@@ -23,6 +23,7 @@ const buttonVariants = cva(
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
         spin: "h-16 px-12 md:px-16 text-xl md:text-2xl rounded-xl",
+        spinSmall: "h-12 px-4 md:px-6 text-xs md:text-sm rounded-xl",
       },
     },
     defaultVariants: {
